@@ -15,7 +15,7 @@ class FileSystem
 
     public static function delete(string $group, string $filename) {
         $cloudinary = new Cloudinary($_SERVER['CLOUDINARY_URL']);
-        $cloudinary->uploadApi()->destroy( "$group/$filename", ['resource_type' => 'image']);
+        $cloudinary->uploadApi()->destroy( "$group/$filename", ['resource_type' => 'video']);
         self::deleteTempContent();
     }
 
