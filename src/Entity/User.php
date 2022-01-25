@@ -31,7 +31,7 @@ class User
     #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Group::class)]
     private $groups;
 
-    #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'particpants')]
+    #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'participants')]
     private $groups_their_in;
 
     public function __construct()
@@ -135,7 +135,7 @@ class User
     {
         if (!$this->groups_their_in->contains($groupsTheirIn)) {
             $this->groups_their_in[] = $groupsTheirIn;
-            $groupsTheirIn->addParticpant($this);
+            $groupsTheirIn->addParticipant($this);
         }
 
         return $this;
@@ -144,7 +144,7 @@ class User
     public function removeGroupsTheirIn(Group $groupsTheirIn): self
     {
         if ($this->groups_their_in->removeElement($groupsTheirIn)) {
-            $groupsTheirIn->removeParticpant($this);
+            $groupsTheirIn->removeParticipant($this);
         }
 
         return $this;

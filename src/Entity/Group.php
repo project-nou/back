@@ -30,11 +30,11 @@ class Group
     private $admin;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'groups_their_in')]
-    private $particpants;
+    private $participants;
 
     public function __construct()
     {
-        $this->particpants = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -93,23 +93,23 @@ class Group
     /**
      * @return Collection|User[]
      */
-    public function getParticpants(): Collection
+    public function getParticipants(): Collection
     {
-        return $this->particpants;
+        return $this->participants;
     }
 
-    public function addParticpant(User $particpant): self
+    public function addParticipant(User $participant): self
     {
-        if (!$this->particpants->contains($particpant)) {
-            $this->particpants[] = $particpant;
+        if (!$this->participants->contains($participant)) {
+            $this->participants[] = $participant;
         }
 
         return $this;
     }
 
-    public function removeParticpant(User $particpant): self
+    public function removeParticipant(User $participant): self
     {
-        $this->particpants->removeElement($particpant);
+        $this->participants->removeElement($participant);
 
         return $this;
     }
