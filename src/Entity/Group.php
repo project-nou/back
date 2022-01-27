@@ -32,9 +32,13 @@ class Group
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'groups_their_in')]
     private $participants;
 
+    #[ORM\OneToMany(mappedBy: 'groupe', targetEntity: Note::class)]
+    private $notes;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->notes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -110,6 +114,36 @@ class Group
     public function removeParticipant(User $participant): self
     {
         $this->participants->removeElement($participant);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Note[]
+     */
+    public function getNotes(): Collection
+    {
+        return $this->notes;
+    }
+
+    public function addNote(Note $note): self
+    {
+        if (!$this->notes->contains($note)) {
+            $this->notes[] = $note;
+            $note->setGroupe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNote(Note $note): self
+    {
+        if ($this->notes->removeElement($note)) {
+            // set the owning side to null (unless already changed)
+            if ($note->getGroupe() === $this) {
+                $note->setGroupe(null);
+            }
+        }
 
         return $this;
     }
