@@ -2,8 +2,11 @@
 
 namespace App\Controller\Invit;
 
+use App\Repository\GroupRepository;
 use App\Repository\UserRepository;
+use App\Services\Group\GroupManagement;
 use App\Services\Invit\Invit;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,6 +14,17 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class InvitController extends AbstractController
 {
+
+
+    private GroupRepository $groupRepository;
+    private UserRepository $userRepository;
+
+    public function __construct(GroupRepository $groupRepository, UserRepository $userRepository)
+    {
+        $this->groupRepository = $groupRepository;
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * @Route("/users/{userId}/groupes/{groupId}/sendInvit", name="sendInvit", methods={"POST"})
      */
@@ -27,14 +41,11 @@ class InvitController extends AbstractController
     /**
      * @Route("/users/{userId}/groupes/{groupId}/invites/{invitId}/accept", name="invit_accept", methods={"GET"})
      */
-    public function invitAccept(Request $request): JsonResponse
+    public function invitAccept(Request $request)
     {
-        return new JsonResponse(
-            [
-                'message' => 'Le fréro à accepté',
-                'isAccepted' => true
-            ], 200
-        );
+        $group = new GroupManagement($this->groupRepository, $this->userRepository);
+        $data = $group->getNames($request->get('groupId'), $request->get('userId'));
+        $group->addParticipantInAGroup($data['group_name'], $data['username']);
     }
 
     /**

@@ -32,7 +32,7 @@ class Invit
         $message = (new Swift_Message('Wonderful Subject'))
             ->setFrom('antoinemousset1999@gmail.com')
             ->setTo('antoinemousset1999@gmail.com')
-            ->setBody('This is your invite http://nou.test' . $url)
+            ->setBody('This is your invite http://localhost:8000' . $url)
         ;
 
         $mailer->send($message);
