@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Exception\UserExist;
+use App\Exception\UserNotFound;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,32 +21,43 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    private function save(User $user)
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $this->_em->persist($user);
+        $this->_em->flush();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?User
+    /**
+     * @throws \Exception
+     */
+    public function register (string $password, string $email, string $username)
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $isExistUser = $this->findOneBy(["username" => $username]);
+        if ($isExistUser) {
+            throw new UserExist($username);
+        }
+        $user = new User();
+        $this->_em->beginTransaction();
+        try {
+            $user
+                ->setPassword($password)
+                ->setEmail($email)
+                ->setUsername($username)
+                ->setIsActive(true);
+            self::save($user);
+            $this->_em->commit();
+        } catch (\Exception $exception) {
+            $this->_em->rollback();
+            throw new \Exception();
+        }
     }
-    */
+
+    public function login(string $username): User
+    {
+        $isExistUser = $this->findOneBy(["username" => $username]);
+        if (!$isExistUser) {
+            throw new UserNotFound($username);
+        }
+        return $isExistUser;
+    }
 }
