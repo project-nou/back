@@ -13,10 +13,12 @@ class AuthController extends AbstractController
 {
 
     private UserRepository $userRepository;
+    private string $secret_key;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, string $secret_key)
     {
         $this->userRepository = $userRepository;
+        $this->secret_key = $secret_key;
     }
 
     /**
@@ -25,10 +27,11 @@ class AuthController extends AbstractController
     public function login(Request $request): JsonResponse
     {
         $res = json_decode($request->getContent());
-        $username = $res->username;
-        $password = $res->password;
+        $auth = new AuthManagement($this->userRepository, $this->secret_key);
+        $auth->login($res->username, $res->password);
         return new JsonResponse(
             [
+                'token' => $auth->login($res->username, $res->password),
                 'message' => 'User is connected'
             ], 200
         );
@@ -41,7 +44,7 @@ class AuthController extends AbstractController
     {
         try {
             $res = json_decode($request->getContent());
-            $auth = new AuthManagement($this->userRepository);
+            $auth = new AuthManagement($this->userRepository, $this->secret_key);
             $auth->register($res->password, $res->email, $res->username);
             return new JsonResponse(
                 [

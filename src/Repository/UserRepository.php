@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Exception\UserExist;
+use App\Exception\UserNotFound;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -28,8 +30,12 @@ class UserRepository extends ServiceEntityRepository
     /**
      * @throws \Exception
      */
-    public function register (string $password, string $username, string $email)
+    public function register (string $password, string $email, string $username)
     {
+        $isExistUser = $this->findOneBy(["username" => $username]);
+        if ($isExistUser) {
+            throw new UserExist($username);
+        }
         $user = new User();
         try {
             $this->_em->beginTransaction();
@@ -44,6 +50,15 @@ class UserRepository extends ServiceEntityRepository
             $this->_em->rollback();
             throw new \Exception();
         }
+    }
+
+    public function login(string $username): User
+    {
+        $isExistUser = $this->findOneBy(["username" => $username]);
+        if (!$isExistUser) {
+            throw new UserNotFound($username);
+        }
+        return $isExistUser;
     }
 
     // /**
