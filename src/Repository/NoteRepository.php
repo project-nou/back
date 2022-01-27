@@ -2,7 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Group;
 use App\Entity\Note;
+use App\Entity\User;
+use App\Exception\NoteAlreadyExist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,32 +22,24 @@ class NoteRepository extends ServiceEntityRepository
         parent::__construct($registry, Note::class);
     }
 
-    // /**
-    //  * @return Note[] Returns an array of Note objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function create(User $user, Group $group, string $format, string $content)
     {
-        return $this->createQueryBuilder('n')
-            ->andWhere('n.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('n.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        //if ($this->findOneBy(['author' => $user, "group" => $group,])) throw new NoteAlreadyExist();
+        $note = new Note;
+        $this->_em->beginTransaction();
+        try {
+            $note
+                ->setAuthor($user)
+                ->setGroup($group)
+                ->setContent($content)
+                ->setFormat($format)
+                ->setIsDone(false);
+            $this->_em->persist($note);
+            $this->_em->flush();
+            $this->_em->commit();
+        } catch (\Exception $exception) {
+            $this->_em->rollback();
+            throw new \Exception();
+        }
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Note
-    {
-        return $this->createQueryBuilder('n')
-            ->andWhere('n.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

@@ -20,19 +20,32 @@ class GroupController extends AbstractController
         $this->groupRepository = $groupRepository;
         $this->userRepository = $userRepository;
     }
+
     /**
      * @Route("/group", name="create_group", methods={"POST"})
      */
     public function create(Request $request): JsonResponse
     {
-        $res = json_decode($request->getContent());
-        $group = new GroupManagement($this->groupRepository, $this->userRepository);
-        $group->create($res->name, $res->username);
-        return new JsonResponse(
-            [
-                'message' => 'Group is created'
-            ], 200
-        );
+        try {
+            $res = json_decode($request->getContent());
+            $group = new GroupManagement($this->groupRepository, $this->userRepository);
+            $group->create($res->name, $res->username);
+            return new JsonResponse(
+                [
+                    'message' => 'Group is created'
+                ], 200
+            );
+        } catch (\Exception $exception) {
+            $exception->getCode() === 0
+                ? $code = 500
+                : $code = $exception->getCode();
+            return new JsonResponse(
+                [
+                    'message' => $exception->getMessage()
+                ], $code
+            );
+        }
+
     }
 
     /**
@@ -40,14 +53,26 @@ class GroupController extends AbstractController
      */
     public function delete(Request $request): JsonResponse
     {
-        $res = json_decode($request->getContent());
-        $group = new GroupManagement($this->groupRepository, $this->userRepository);
-        $group->delete($res->name, $res->username);
-        return new JsonResponse(
-            [
-                'message' => 'Group is deleted'
-            ], 200
-        );
+        try {
+            $res = json_decode($request->getContent());
+            $group = new GroupManagement($this->groupRepository, $this->userRepository);
+            $group->delete($res->name, $res->username);
+            return new JsonResponse(
+                [
+                    'message' => 'Group is deleted'
+                ], 200
+            );
+        } catch (\Exception $exception) {
+            $exception->getCode() === 0
+                ? $code = 500
+                : $code = $exception->getCode();
+            return new JsonResponse(
+                [
+                    'message' => $exception->getMessage()
+                ], $code
+            );
+        }
+
     }
 
     /**
@@ -55,14 +80,26 @@ class GroupController extends AbstractController
      */
     public function addParticipants(Request $request): JsonResponse
     {
-        $group_name = $request->get('group_name');
-        $username = $request->get('username');
-        $group = new GroupManagement($this->groupRepository, $this->userRepository);
-        $group->addParticipantInAGroup($group_name, $username);
-        return new JsonResponse(
-            [
-                'message' => "$username has been added to $group_name group"
-            ], 200
-        );
+        try {
+            $group_name = $request->get('group_name');
+            $username = $request->get('username');
+            $group = new GroupManagement($this->groupRepository, $this->userRepository);
+            $group->addParticipantInAGroup($group_name, $username);
+            return new JsonResponse(
+                [
+                    'message' => "$username has been added to $group_name group"
+                ], 200
+            );
+        } catch (\Exception $exception) {
+            $exception->getCode() === 0
+                ? $code = 500
+                : $code = $exception->getCode();
+            return new JsonResponse(
+                [
+                    'message' => $exception->getMessage()
+                ], $code
+            );
+        }
+
     }
 }
