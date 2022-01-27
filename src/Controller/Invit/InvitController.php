@@ -2,19 +2,22 @@
 
 namespace App\Controller\InvitController;
 
+use App\Repository\UserRepository;
 use App\Services\Invit\Invit;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class InvitController
+class InvitController extends AbstractController
 {
     /**
-     * @Route("/users/{userId}/invites/{invitId}/accept", name="invit_accept", methods={"GET"})
+     * @Route("/users/{userId}/groupes/{groupId}/sendInvit", name="sendInvit", methods={"POST"})
      */
-    public function sendInvitAccept(Request $request, MailerInterface $mailer): JsonResponse
+    public function sendInvitAccept(Request $request): JsonResponse
     {
-        Invit::sendMailAccept($request->userId, $request->invitId);
+
+        Invit::sendMail($request->get('userId'), $request->get('groupId'));
         return new JsonResponse(
             [
                 'message' => 'Mail sent'
@@ -23,16 +26,30 @@ class InvitController
     }
 
     /**
-     * @Route("/users/{userId}/invites/{invitId}/decline", name="upload_file", methods={"GET"})
+     * @Route("/users/{userId}/groupes/{groupId}/invites/{invitId}/accept", name="invit_accept", methods={"GET"})
      */
-    public function sendInvitDecline(Request $request): JsonResponse
+    public function invitAccept(Request $request): JsonResponse
     {
-        Invit::sendMailDecline($userId, $invitId);
         return new JsonResponse(
             [
-                'message' => 'Mail sent'
+                'message' => 'Le fréro à accepté',
+                'isAccepted' => true
             ], 200
         );
     }
+
+    /**
+     * @Route("/users/{userId}/groupes/{groupId}/invites/{invitId}/decline", name="invit_decline", methods={"GET"})
+     */
+    public function invitDecline(Request $request): JsonResponse
+    {
+        return new JsonResponse(
+            [
+                'message' => 'Pas acceptée',
+                'isAccepted' => false
+            ], 200
+        );
+    }
+
 
 }
