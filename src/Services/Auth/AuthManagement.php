@@ -17,9 +17,15 @@ class AuthManagement
         $this->secret_key = $secret_key;
     }
 
-    public function register(string $password, string $email, string $username) : void
+    public function register(string $password, string $email, string $username) : string
     {
         $this->userRepository->register(self::encodePassword($password), $email, $username);
+        return self::encodeToken($this->secret_key,
+            [
+                $username,
+                "iat" => time(),
+                "exp" => time() + 60 * 60
+            ]);
     }
 
     public function login(string $username, string $password) : string
