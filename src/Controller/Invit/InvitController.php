@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\InvitController;
+namespace App\Controller\Invit;
 
 use App\Repository\UserRepository;
 use App\Services\Invit\Invit;
@@ -16,7 +16,6 @@ class InvitController extends AbstractController
      */
     public function sendInvitAccept(Request $request): JsonResponse
     {
-
         Invit::sendMail($request->get('userId'), $request->get('groupId'));
         return new JsonResponse(
             [
