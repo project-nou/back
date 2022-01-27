@@ -18,8 +18,8 @@
         "symfony/framework-bundle": "5.4.*",
         "symfony/proxy-manager-bridge": "5.4.*",
         "symfony/runtime": "5.4.*",
-        "symfony/yaml": "5.4.*",
-      "ext-http": "*"
+        "symfony/uid": "^6.0",
+        "symfony/yaml": "5.4.*"
     },
     "config": {
         "allow-plugins": {
