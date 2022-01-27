@@ -19,7 +19,6 @@ class FileSystem
         $cloudinary = new Cloudinary($_SERVER['CLOUDINARY_URL']);
         $cloudinary->uploadApi()->destroy("$group/$filename", ['resource_type' => 'image']);
         /// TODO : Si plus aucun fichier dans dossier Cloudinary, delete dossier.
-        /// self::deleteFolderCloudinary("$group./");
         self::deleteTempContent();
     }
 
