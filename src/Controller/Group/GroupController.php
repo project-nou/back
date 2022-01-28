@@ -72,7 +72,62 @@ class GroupController extends AbstractController
                 ], $code
             );
         }
+    }
 
+    /**
+     * @Route("/group/{group_id}", name="delete_group", methods={"GET"})
+     */
+    public function getOne(Request $request): JsonResponse
+    {
+        try {
+            $group_id = $request->get('group_id');
+            $group = new GroupManagement($this->groupRepository, $this->userRepository);
+            return new JsonResponse(
+                [
+                    'name' => $group->getOne($group_id)->getName(),
+                    'group_id' => $group->getOne($group_id)->getId(),
+                    'admin' => $group->getOne($group_id)->getAdmin()->getUsername(),
+                    'participants' => $group->getOne($group_id)->getParticipants(),
+                    'notes' => $group->getOne($group_id)->getNotes(),
+                    'message' => 'Group is get'
+                ], 200
+            );
+        } catch (\Exception $exception) {
+            $exception->getCode() === 0
+                ? $code = 500
+                : $code = $exception->getCode();
+            return new JsonResponse(
+                [
+                    'message' => $exception->getMessage()
+                ], $code
+            );
+        }
+    }
+
+    /**
+     * @Route("/groups/{username}", name="delete_group", methods={"GET"})
+     */
+    public function getAllByUsername(Request $request): JsonResponse
+    {
+        try {
+            $username = $request->get('username');
+            $group = new GroupManagement($this->groupRepository, $this->userRepository);
+            return new JsonResponse(
+                [
+                    'groups' => $group->getAllByUsername($username),
+                    'message' => 'Groups get'
+                ], 200
+            );
+        } catch (\Exception $exception) {
+            $exception->getCode() === 0
+                ? $code = 500
+                : $code = $exception->getCode();
+            return new JsonResponse(
+                [
+                    'message' => $exception->getMessage()
+                ], $code
+            );
+        }
     }
 
     /**
