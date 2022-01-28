@@ -66,9 +66,15 @@ class InvitController extends AbstractController
         $group = new GroupManagement($this->groupRepository, $this->userRepository);
         $invit = new Invit($this->groupRepository, $this->userRepository);
         $data = $group->getNames($request->get('groupId'), $request->get('userId'));
+        $eUser = $this->userRepository->find($request->get('userId'));
+        $eGroup = $this->groupRepository->find($request->get('groupId'));
+        $body = $eUser->getUsername() . ' has accepted your invitation on ' . $eGroup->getName() . '\'s group.';
+        $subject = $eUser->getUsername() . ' has accepted your invitation';
+        $userEmail = $eGroup->getAdmin()->getEmail();
         if ($invit->verifUser($request->get('groupId'), $request->get('userId')))
         {
             $group->addParticipantInAGroup($data['group_name'], $data['username']);
+            $invit->sendMail($request->get('userId'), $request->get('groupId'), $body, $subject, $userEmail);
             return new JsonResponse(
                 [
                     'message' => 'Utilisateur ajouté BG',
@@ -88,6 +94,13 @@ class InvitController extends AbstractController
      */
     public function invitDecline(Request $request): JsonResponse
     {
+        $invit = new Invit($this->groupRepository, $this->userRepository);
+        $eUser = $this->userRepository->find($request->get('userId'));
+        $eGroup = $this->groupRepository->find($request->get('groupId'));
+        $body = $eUser->getUsername() . ' has declined your invitation on ' . $eGroup->getName() . '\'s group.';
+        $subject = $eUser->getUsername() . ' has declined your invitation';
+        $userEmail = $eGroup->getAdmin()->getEmail();
+        $invit->sendMail($request->get('userId'), $request->get('groupId'), $body, $subject, $userEmail);
         return new JsonResponse(
             [
                 'message' => 'Pas acceptée',
