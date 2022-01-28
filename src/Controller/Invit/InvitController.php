@@ -30,7 +30,8 @@ class InvitController extends AbstractController
      */
     public function sendInvitAccept(Request $request): JsonResponse
     {
-        Invit::sendMail($request->get('userId'), $request->get('groupId'));
+        $invit = new Invit($this->groupRepository, $this->userRepository);
+        $invit->sendMail($request->get('userId'), $request->get('groupId'));
         return new JsonResponse(
             [
                 'message' => 'Mail sent'
@@ -44,8 +45,23 @@ class InvitController extends AbstractController
     public function invitAccept(Request $request)
     {
         $group = new GroupManagement($this->groupRepository, $this->userRepository);
+        $invit = new Invit($this->groupRepository, $this->userRepository);
         $data = $group->getNames($request->get('groupId'), $request->get('userId'));
-        $group->addParticipantInAGroup($data['group_name'], $data['username']);
+        if ($invit->verifUser($request->get('groupId'), $request->get('userId')))
+        {
+            $group->addParticipantInAGroup($data['group_name'], $data['username']);
+            return new JsonResponse(
+                [
+                    'message' => 'Utilisateur ajouté BG',
+                ], 200
+            );
+        }
+        return new JsonResponse(
+            [
+                'message' => 'Deja ajouté',
+            ], 400
+        );
+
     }
 
     /**
