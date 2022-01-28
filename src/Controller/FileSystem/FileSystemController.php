@@ -14,7 +14,6 @@ class FileSystemController
      */
     public function upload(Request $request): JsonResponse
     {
-        FileSystem::upload(file_get_contents($request->files->get('file')),  $request->get('groupe'), $request->get('filename'));
         return new JsonResponse(
             [
                 'message' => 'Upload file ok'

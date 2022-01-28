@@ -5,6 +5,7 @@ namespace App\Controller\Note;
 use App\Repository\GroupRepository;
 use App\Repository\NoteRepository;
 use App\Repository\UserRepository;
+use App\Services\FileSystem\FileSystem;
 use App\Services\Note\NoteManagement;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,12 +31,38 @@ class NoteController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         try {
-            $res = json_decode($request->getContent());
             $note_management = new NoteManagement($this->noteRepository, $this->userRepository, $this->groupRepository);
-            $note_management->create($res->group_name, $res->author, $res->format, $res->content);
+            if ($request->get('format') === 'file') {
+                $note_management->create($request->get('group'), $request->get('author'), $request->get('format'), $request->files->get('file')->getClientOriginalName());
+                FileSystem::upload(file_get_contents($request->files->get('file')), $request->get('group'), $request->files->get('file')->getClientOriginalName());
+            } else if ($request->get('format') === 'file') {
+                $note_management->create($request->get('group'), $request->get('author'), $request->get('format'), $request->get('content'));
+            }
+
+        } catch (\Exception $exception) {
+            $exception->getCode() === 0
+                ? $code = 500
+                : $code = $exception->getCode();
             return new JsonResponse(
                 [
-                    'message' => 'Note created'
+                    'message' => $exception->getMessage()
+                ], $code
+            );
+        }
+    }
+
+    /**
+     * @Route("/notes/{group_id}", name="create note", methods={"GET"})
+     */
+    public function getAllNotesByGroup(Request $request): JsonResponse
+    {
+        try {
+            $note_management = new NoteManagement($this->noteRepository, $this->userRepository, $this->groupRepository);
+
+            return new JsonResponse(
+                [
+                    'notes' => $note_management->getAllNotesByGroup($request->get('group_id')),
+                    'message' => 'Notes of the group get'
                 ], 200
             );
         } catch (\Exception $exception) {
@@ -48,6 +75,5 @@ class NoteController extends AbstractController
                 ], $code
             );
         }
-
     }
 }
