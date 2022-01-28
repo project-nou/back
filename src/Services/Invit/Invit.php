@@ -23,13 +23,8 @@ class Invit
         $this->userRepository = $userRepository;
     }
 
-    public function sendMail(int $userId, $groupId)
+    public function sendMail(int $userId, $groupId, $body, $subject, $userEmail)
     {
-        $invitId = Uuid::v6();
-        $url = '/users/' . $userId . '/groupes/' . $groupId . '/invites/' . $invitId . '/accept';
-        $eUser = $this->userRepository->find($userId);
-        $userEmail = $eUser->getEmail();
-
         $transport = (new Swift_SmtpTransport('smtp.gmail.com', 465, 'ssl'))
             ->setUsername('antoinemousset1999@gmail.com')
             ->setPassword('rzdipdhyxqlsnhzs')
@@ -39,10 +34,10 @@ class Invit
         $mailer = new Swift_Mailer($transport);
 
 // Create a message
-        $message = (new Swift_Message('Wonderful Subject'))
+        $message = (new Swift_Message($subject))
             ->setFrom('antoinemousset1999@gmail.com')
             ->setTo($userEmail)
-            ->setBody('This is your invite http://localhost:8000' . $url)
+            ->setBody($body)
         ;
 
         $mailer->send($message);

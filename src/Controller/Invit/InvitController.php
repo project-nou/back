@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Uid\Uuid;
 
 class InvitController extends AbstractController
 {
@@ -31,9 +32,19 @@ class InvitController extends AbstractController
     public function sendInvit(Request $request): JsonResponse
     {
         $invit = new Invit($this->groupRepository, $this->userRepository);
+        $subject = 'You received a invitation for a group';
+        $groupId = $request->get('groupId');
+        $eGroup = $this->groupRepository->find($groupId);
+        $userId = $request->get('userId');
+        $invitId = Uuid::v6();
+        $url = 'http://localhost:8000/users/' . $userId . '/groupes/' . $groupId . '/invites/' . $invitId . '/accept';
+        $eUser = $this->userRepository->find($userId);
+        $userEmail = $eUser->getEmail();
+        $body = 'Hello ' . $eUser->getUsername() . '! You\'ve been invited to join ' . $eGroup->getName() . '\'s group by ' . $eGroup->getAdmin()->getUsername() . '.' . ' Link to the group: ' . $url;
+
         if ($invit->verifUser($request->get('groupId'), $request->get('userId')))
         {
-            $invit->sendMail($request->get('userId'), $request->get('groupId'));
+            $invit->sendMail($request->get('userId'), $request->get('groupId'), $body, $subject, $userEmail);
             return new JsonResponse(
                 [
                     'message' => 'Mail sent',
