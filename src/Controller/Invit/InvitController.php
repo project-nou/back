@@ -28,14 +28,22 @@ class InvitController extends AbstractController
     /**
      * @Route("/users/{userId}/groupes/{groupId}/sendInvit", name="sendInvit", methods={"POST"})
      */
-    public function sendInvitAccept(Request $request): JsonResponse
+    public function sendInvit(Request $request): JsonResponse
     {
         $invit = new Invit($this->groupRepository, $this->userRepository);
-        $invit->sendMail($request->get('userId'), $request->get('groupId'));
+        if ($invit->verifUser($request->get('groupId'), $request->get('userId')))
+        {
+            $invit->sendMail($request->get('userId'), $request->get('groupId'));
+            return new JsonResponse(
+                [
+                    'message' => 'Mail sent',
+                ], 200
+            );
+        }
         return new JsonResponse(
             [
-                'message' => 'Mail sent'
-            ], 200
+                'message' => 'Utilisateur deja ajouté'
+            ], 400
         );
     }
 
