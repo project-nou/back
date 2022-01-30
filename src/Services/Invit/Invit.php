@@ -25,30 +25,24 @@ class Invit
 
     public function sendMail(int $userId, $groupId, $body, $subject, $userEmail)
     {
-        $transport = (new Swift_SmtpTransport('smtp.gmail.com', 465, 'ssl'))
+        $transport = (new Swift_SmtpTransport('smtp.gmail.com',
+                465, 'ssl'))
             ->setUsername('antoinemousset1999@gmail.com')
-            ->setPassword('rzdipdhyxqlsnhzs')
-    ;
-
-// Create the Mailer using your created Transport
+            ->setPassword('rzdipdhyxqlsnhzs');
+        // Create the Mailer using your created Transport
         $mailer = new Swift_Mailer($transport);
-
-// Create a message
+        // Create a message
         $message = (new Swift_Message($subject))
             ->setFrom('antoinemousset1999@gmail.com')
             ->setTo($userEmail)
-            ->setBody($body)
-        ;
-
+            ->setBody($body);
         $mailer->send($message);
     }
 
     public function verifUser($groupId, $userId): bool
     {
-        $eGroup = $this->groupRepository->find($groupId);
         $eUser = $this->userRepository->find($userId);
         $groupsTheirIn = $eUser->getGroupsTheirIn();
-//        dd($groupsTheirIn);
         foreach ($groupsTheirIn as $group) {
             if ($group->getId() == $groupId ){
                return false;
