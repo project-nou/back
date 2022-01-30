@@ -39,4 +39,12 @@ class GroupManagement
         $user = $this->userRepository->findOneByUsername($username);
         $this->groupRepository->remove($name, $user);
     }
+
+    public function getNames(int $group_id, int $user_id) : array
+    {
+        return [
+            "group_name" => $this->groupRepository->getNameById($group_id),
+            "username" => $this->userRepository->getUsernameById($user_id),
+        ];
+    }
 }
