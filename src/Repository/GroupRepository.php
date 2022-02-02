@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Group;
+use App\Entity\Note;
 use App\Entity\User;
 use App\Exception\GroupExist;
 use App\Exception\GroupNotFound;
@@ -84,6 +85,22 @@ class GroupRepository extends ServiceEntityRepository
             $group->setIsActive(false);
             self::save($group);
             $this->_em->commit();
+        } catch (\Exception $exception) {
+            $this->_em->rollback();
+            throw new \Exception();
+        }
+    }
+
+    public function deleteANote(int $group_id, int $note_id, NoteRepository $noteRepository)
+    {
+        $group = self::find($group_id);
+        $note = $noteRepository->find($note_id);
+        $this->_em->beginTransaction();
+        try {
+            $group->removeNote($note);
+            $this->_em->remove($note);
+            $this->_em->persist($group);
+            $this->_em->flush();
         } catch (\Exception $exception) {
             $this->_em->rollback();
             throw new \Exception();

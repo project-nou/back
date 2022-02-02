@@ -3,6 +3,7 @@
 namespace App\Services\Note;
 
 use App\Exception\GroupNotFound;
+use App\Exception\NoteAlreadyExist;
 use App\Exception\UserNotFound;
 use App\Repository\GroupRepository;
 use App\Repository\NoteRepository;
@@ -29,7 +30,7 @@ class NoteManagement
         $this->noteRepository->create($this->userRepository->findOneByUsername($author), $this->groupRepository->findOneByName($group_name), $format, $content);
     }
 
-    public function getAllNotesByGroup(int $group_id): array
+    public function getAllNotesByGroup(int $group_id, string $type_file): array
     {
         $group = $this->groupRepository->find($group_id);
         $notes = [];
@@ -39,8 +40,18 @@ class NoteManagement
             $temp['author'] = $note->getAuthor()->getUsername();
             $temp['format'] = $note->getFormat();
             $temp['is_done'] = $note->getIsDone();
-            array_push($notes, $temp);
+            if ($temp['format'] === $type_file) {
+                array_push($notes, $temp);
+            }
         }
         return $notes;
+    }
+
+    public function delete(int $group_id, int $note_id) : void
+    {
+        $this->groupRepository->deleteANote($group_id, $note_id, $this->noteRepository);
+        if ($this->noteRepository->find($note_id)) {
+            throw new NoteAlreadyExist();
+        }
     }
 }

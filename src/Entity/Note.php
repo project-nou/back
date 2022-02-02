@@ -57,12 +57,12 @@ class Note
         return $this;
     }
 
-    public function getGroup(): ?Group
+    public function getGroupe(): ?Group
     {
         return $this->group;
     }
 
-    public function setGroup(?Group $group): self
+    public function setGroupe(?Group $group): self
     {
         $this->group = $group;
 
