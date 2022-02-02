@@ -31,10 +31,9 @@ class NoteManagement
 
     public function getAllNotesByGroup(int $group_id): array
     {
-        $group = $this->groupRepository->findById($group_id);
+        $group = $this->groupRepository->find($group_id);
         $notes = [];
-        foreach ($group[0]->getNotes() as $note) {
-            dd($note);
+        foreach ($group->getNotes() as $note) {
             $temp['note_id'] = $note->getId();
             $temp['content'] = $note->getContent();
             $temp['author'] = $note->getAuthor()->getUsername();

@@ -32,7 +32,7 @@ class Group
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'groups_their_in')]
     private $participants;
 
-    #[ORM\OneToMany(mappedBy: 'groupe', targetEntity: Note::class)]
+    #[ORM\OneToMany(mappedBy: 'group', targetEntity: Note::class)]
     private $notes;
 
     public function __construct()
