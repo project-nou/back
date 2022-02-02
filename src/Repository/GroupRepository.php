@@ -68,6 +68,11 @@ class GroupRepository extends ServiceEntityRepository
         }
     }
 
+    public function getNameById(int $id)
+    {
+        return self::findOneById($id)->getName();
+    }
+
     public function remove(string $name, User $user)
     {
         $group = self::findOneByName($name);

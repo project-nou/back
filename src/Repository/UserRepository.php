@@ -21,6 +21,11 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function getUsernameById(int $id)
+    {
+        return self::findOneById($id)->getUsername();
+    }
+
     private function save(User $user)
     {
         $this->_em->persist($user);

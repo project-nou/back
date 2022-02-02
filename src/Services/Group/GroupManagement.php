@@ -47,7 +47,7 @@ class GroupManagement
 
     public function getAllByUsername(string $username): array
     {
-        $user =  $this->userRepository->findOneByUsername($username);
+        $user = $this->userRepository->findOneByUsername($username);
         $groups = [];
         foreach ($user->getGroupsTheirIn() as $group) {
             $temp['group_id'] = $group->getId();
@@ -57,5 +57,13 @@ class GroupManagement
             array_push($groups, $temp);
         }
         return $groups;
+    }
+
+    public function getNames(int $group_id, int $user_id) : array
+    {
+        return [
+            "group_name" => $this->groupRepository->getNameById($group_id),
+            "username" => $this->userRepository->getUsernameById($user_id),
+        ];
     }
 }
