@@ -34,7 +34,7 @@ class NoteController extends AbstractController
             $note_management = new NoteManagement($this->noteRepository, $this->userRepository, $this->groupRepository);
             if ($request->get('format') === 'file') {
                 $note_management->create($request->get('group'), $request->get('author'), $request->get('format'), $request->files->get('file')->getClientOriginalName());
-                FileSystem::upload(file_get_contents($request->files->get('file')), $request->get('group'), $request->files->get('file')->getClientOriginalName());
+                FileSystem::upload(file_get_contents($request->files->get('file')), $request->get('group'), $request->get('group_id'), $request->files->get('file')->getClientOriginalName());
             } else if ($request->get('format') === 'text') {
                 $note_management->create($request->get('group'), $request->get('author'), $request->get('format'), $request->get('content'));
             }
