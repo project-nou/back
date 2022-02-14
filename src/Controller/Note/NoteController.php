@@ -108,4 +108,24 @@ class NoteController extends AbstractController
             );
         }
     }
+
+    /**
+     * @Route("/note/status", name="change_status", methods={"POST"})
+     */
+    public function changeStatus(Request $request): JsonResponse
+    {
+        try {
+
+        } catch (\Exception $exception) {
+            $exception->getCode() === 0
+                ? $code = 500
+                : $code = $exception->getCode();
+            return new JsonResponse(
+                [
+                    'message' => $exception->getMessage()
+                ], $code
+            );
+        }
+    }
+
 }
