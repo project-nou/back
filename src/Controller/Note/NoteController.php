@@ -110,6 +110,34 @@ class NoteController extends AbstractController
     }
 
     /**
+     * @Route("/note", name="udpate note", methods={"PATCH"})
+     * Get all notes by type of note (text or file)
+     */
+    public function update(Request $request): JsonResponse
+    {
+        $note_id = json_decode($request->getContent())->note_id;
+        $content_note = json_decode($request->getContent())->content_note;
+        try {
+            $note_management = new NoteManagement($this->noteRepository, $this->userRepository, $this->groupRepository);
+            $note_management->update($note_id, $content_note);
+            return new JsonResponse(
+                [
+                    'message' => 'Note is updated'
+                ], 200
+            );
+        } catch (\Exception $exception) {
+            $exception->getCode() === 0
+                ? $code = 500
+                : $code = $exception->getCode();
+            return new JsonResponse(
+                [
+                    'message' => $exception->getMessage()
+                ], $code
+            );
+        }
+    }
+
+    /**
      * @Route("/note/status", name="change_status", methods={"POST"})
      */
     public function changeStatus(Request $request): JsonResponse
