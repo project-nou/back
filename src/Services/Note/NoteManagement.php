@@ -55,6 +55,11 @@ class NoteManagement
         }
     }
 
+    public function update(int $note_id, string $content_note)
+    {
+        $this->noteRepository->update($note_id, $content_note);
+    }
+
     public function changeStatusForNote(int $note_id)
     {
         $this->noteRepository->updateStatus($note_id);

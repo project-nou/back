@@ -131,6 +131,33 @@ class GroupController extends AbstractController
     }
 
     /**
+     * @Route("/group", name="update_group", methods={"PATCH"})
+     */
+    public function update(Request $request): JsonResponse
+    {
+        try {
+            $group_id = json_decode($request->getContent())->group_id;
+            $group_name = json_decode($request->getContent())->group_name;
+            $group = new GroupManagement($this->groupRepository, $this->userRepository);
+            $group->update($group_id, $group_name);
+            return new JsonResponse(
+                [
+                    'message' => 'Group is updated'
+                ], 200
+            );
+        } catch (\Exception $exception) {
+            $exception->getCode() === 0
+                ? $code = 500
+                : $code = $exception->getCode();
+            return new JsonResponse(
+                [
+                    'message' => $exception->getMessage()
+                ], $code
+            );
+        }
+    }
+
+    /**
      * @Route("/{group_name}/add/{username}", name="add user in group", methods={"POST"})
      */
     public function addParticipants(Request $request): JsonResponse
