@@ -40,6 +40,25 @@ class GroupManagement
         $this->groupRepository->remove($name, $user);
     }
 
+    public function getOne(int $group_id): ?\App\Entity\Group
+    {
+        return $this->groupRepository->find($group_id);
+    }
+
+    public function getAllByUsername(string $username): array
+    {
+        $user = $this->userRepository->findOneByUsername($username);
+        $groups = [];
+        foreach ($user->getGroupsTheirIn() as $group) {
+            $temp['group_id'] = $group->getId();
+            $temp['group_name'] = $group->getName();
+            $temp['author_id'] = $group->getAdmin()->getId();
+            $temp['author'] = $group->getAdmin()->getUsername();
+            array_push($groups, $temp);
+        }
+        return $groups;
+    }
+
     public function getNames(int $group_id, int $user_id) : array
     {
         return [
