@@ -54,4 +54,9 @@ class NoteManagement
             throw new NoteAlreadyExist();
         }
     }
+
+    public function changeStatusForNote(int $note_id)
+    {
+        $this->noteRepository->updateStatus($note_id);
+    }
 }

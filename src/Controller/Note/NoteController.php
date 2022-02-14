@@ -115,7 +115,14 @@ class NoteController extends AbstractController
     public function changeStatus(Request $request): JsonResponse
     {
         try {
-
+            $note_id = json_decode($request->getContent())->note_id;
+            $note_management = new NoteManagement($this->noteRepository, $this->userRepository, $this->groupRepository);
+            $note_management->changeStatusForNote($note_id);
+            return new JsonResponse(
+                [
+                    'message' => 'status updated'
+                ], 200
+            );
         } catch (\Exception $exception) {
             $exception->getCode() === 0
                 ? $code = 500
