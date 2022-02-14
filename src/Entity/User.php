@@ -34,10 +34,14 @@ class User
     #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'participants')]
     private $groups_their_in;
 
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Note::class)]
+    private $notes;
+
     public function __construct()
     {
         $this->groups = new ArrayCollection();
         $this->groups_their_in = new ArrayCollection();
+        $this->notes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -145,6 +149,36 @@ class User
     {
         if ($this->groups_their_in->removeElement($groupsTheirIn)) {
             $groupsTheirIn->removeParticipant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Note[]
+     */
+    public function getNotes(): Collection
+    {
+        return $this->notes;
+    }
+
+    public function addNote(Note $note): self
+    {
+        if (!$this->notes->contains($note)) {
+            $this->notes[] = $note;
+            $note->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNote(Note $note): self
+    {
+        if ($this->notes->removeElement($note)) {
+            // set the owning side to null (unless already changed)
+            if ($note->getAuthor() === $this) {
+                $note->setAuthor(null);
+            }
         }
 
         return $this;
