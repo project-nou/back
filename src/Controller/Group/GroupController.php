@@ -75,7 +75,7 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @Route("/group/{group_id}", name="delete_group", methods={"GET"})
+     * @Route("/group/{group_id}", name="get_one__group", methods={"GET"})
      */
     public function getOne(Request $request): JsonResponse
     {

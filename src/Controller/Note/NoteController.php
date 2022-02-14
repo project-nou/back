@@ -56,7 +56,7 @@ class NoteController extends AbstractController
     }
 
     /**
-     * @Route("/notes/{group_id}", name="get all notes by group", methods={"GET"})
+     * @Route("/notes/{group_id}/{type_note}", name="get all notes by group", methods={"GET"})
      * Get all notes by type of note (text or file)
      */
     public function getAllNotesByGroup(Request $request): JsonResponse
@@ -65,7 +65,7 @@ class NoteController extends AbstractController
             $note_management = new NoteManagement($this->noteRepository, $this->userRepository, $this->groupRepository);
             return new JsonResponse(
                 [
-                    'notes' => $note_management->getAllNotesByGroup($request->get('group_id'), json_decode($request->getContent())->type_note),
+                    'notes' => $note_management->getAllNotesByGroup($request->get('group_id'), $request->get('type_note')),
                     'message' => 'Notes of the group get'
                 ], 200
             );

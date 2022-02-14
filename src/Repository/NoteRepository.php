@@ -32,7 +32,7 @@ class NoteRepository extends ServiceEntityRepository
         try {
             $note
                 ->setAuthor($user)
-                ->setGroup($group)
+                ->setGroupe($group)
                 ->setContent($content)
                 ->setFormat($format)
                 ->setIsDone(false);
