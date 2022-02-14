@@ -8,6 +8,7 @@ class FileSystem
 {
     public static function upload($file, string $group, int $group_id, string $filename)
     {
+        $filename = explode(".", $filename)[0];
         file_put_contents("temp/$filename", $file);
         $cloudinary = new Cloudinary($_SERVER['CLOUDINARY_URL']);
         $cloudinary->uploadApi()->upload("temp/$filename", ['public_id' => "$group/$group_id/$filename"]);
