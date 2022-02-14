@@ -42,4 +42,23 @@ class NoteRepository extends ServiceEntityRepository
             throw new \Exception();
         }
     }
+
+    public function updateStatus(int $note_id)
+    {
+        $this->_em->beginTransaction();
+        try {
+            $note = self::find($note_id);
+            if ($note->getIsDone()) {
+                $note->setIsDone(false);
+            } else {
+                $note->setIsDone(true);
+            }
+            $this->_em->persist($note);
+            $this->_em->flush();
+            $this->_em->commit();
+        } catch (\Exception $exception) {
+            $this->_em->rollback();
+            throw new \Exception();
+        }
+    }
 }
