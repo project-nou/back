@@ -66,4 +66,9 @@ class GroupManagement
             "username" => $this->userRepository->getUsernameById($user_id),
         ];
     }
+
+    public function update(int $group_id, string $group_name)
+    {
+        $this->groupRepository->update($group_id, $group_name);
+    }
 }

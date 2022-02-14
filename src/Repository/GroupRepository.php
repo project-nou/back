@@ -106,4 +106,19 @@ class GroupRepository extends ServiceEntityRepository
             throw new \Exception();
         }
     }
+
+    public function update(int $group_id, string $group_name)
+    {
+        $this->_em->beginTransaction();
+        try {
+            $group = self::find($group_id);
+            $group->setName($group_name);
+            $this->_em->persist($group);
+            $this->_em->flush();
+            $this->_em->commit();
+        } catch (\Exception $exception) {
+            $this->_em->rollback();
+            throw new \Exception();
+        }
+    }
 }
