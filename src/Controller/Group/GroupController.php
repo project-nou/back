@@ -4,6 +4,7 @@ namespace App\Controller\Group;
 
 use App\Repository\GroupRepository;
 use App\Repository\UserRepository;
+use App\Services\Admin\Admin;
 use App\Services\Group\GroupManagement;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -128,6 +129,38 @@ class GroupController extends AbstractController
                 ], $code
             );
         }
+    }
+
+    /**
+     * @Route("/user/{userId}/group/{groupId}/leave", name="leave_group", methods={"DELETE"})
+     */
+    public function leave(Request $request): JsonResponse
+    {
+        $groupId = $request->get('groupId');
+        $userId = $request->get('userId');
+        $eUser = $this->userRepository->find($userId);
+        $username = $eUser->getUsername();
+        $eGroup = new GroupManagement($this->groupRepository, $this->userRepository);
+        $eGroup->removeParticipantsInAGroup($groupId, $username);
+
+        //verif si c'est l'admin qui leave
+        if ($admin_id = $userId){
+        $eGroup = $this->groupRepository->find($groupId);
+        $admin_id = $eGroup->getAdmin()->getId();
+        $participants = $eGroup->getParticipants();
+        foreach ($participants as $participant) {
+            $particpantsInArray = $participants->toArray();
+            $random = array_rand($particpantsInArray, 1);
+            $newAdminId = $participants[$random];
+            }
+            $admin = new Admin($this->groupRepository, $this->userRepository);
+            $admin->changeAdmin($newAdminId, $groupId);
+        }
+        return new JsonResponse(
+            [
+                'message' => 'Group left'
+            ], 200
+        );
     }
 
     /**

@@ -34,6 +34,14 @@ class GroupManagement
             : $this->groupRepository->addParticipant($name, $user);
     }
 
+    public function removeParticipantsInAGroup(int $id, string $username) :void
+    {
+        $eUser = $this->userRepository->findOneByUsername($username);
+        !$eUser
+            ? throw new UserNotFound($username)
+            : $this->groupRepository->removeParticipant($id, $eUser);
+    }
+
     public function delete(string $name, string $username) :void
     {
         $user = $this->userRepository->findOneByUsername($username);
