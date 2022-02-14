@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Group;
 use App\Entity\Note;
 use App\Entity\User;
+use App\Exception\ErrorFormatTypeNoteUpdate;
+use App\Exception\GroupNotFound;
 use App\Exception\NoteAlreadyExist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -34,6 +36,22 @@ class NoteRepository extends ServiceEntityRepository
                 ->setContent($content)
                 ->setFormat($format)
                 ->setIsDone(false);
+            $this->_em->persist($note);
+            $this->_em->flush();
+            $this->_em->commit();
+        } catch (\Exception $exception) {
+            $this->_em->rollback();
+            throw new \Exception();
+        }
+    }
+
+    public function update(int $note_id, string $content_note)
+    {
+        $this->_em->beginTransaction();
+        try {
+            $note = self::find($note_id);
+            if ($note->getFormat()=== 'file') throw new GroupNotFound("coucou");
+            $note->setContent($content_note);
             $this->_em->persist($note);
             $this->_em->flush();
             $this->_em->commit();
