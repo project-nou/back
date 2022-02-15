@@ -29,9 +29,11 @@ class GroupController extends AbstractController
         try {
             $res = json_decode($request->getContent());
             $group = new GroupManagement($this->groupRepository, $this->userRepository);
+            $group = $group->create($res->name, $res->username);
             return new JsonResponse(
                 [
-                    $group->create($res->name, $res->username),
+                    'groupname' =>$group->getName(),
+                    'group_id' => $group->getId(),
                     'message' => 'Group is created'
                 ], 200
             );

@@ -19,15 +19,11 @@ class GroupManagement
         $this->userRepository = $userRepository;
     }
 
-    public function create(string $name, string $username) : array
+    public function create(string $name, string $username) : Group
     {
         $user = $this->userRepository->findOneByUsername($username);
         if (!$user) throw new UserNotFound($username);
-        $group = $this->groupRepository->create($name, $user);
-        return [
-            'group_id' => $group->getId(),
-            'groupname' => $group->getName()
-        ];
+        return $this->groupRepository->create($name, $user);
     }
 
     public function addParticipantInAGroup(string $name, string $username) :void
