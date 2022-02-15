@@ -27,7 +27,7 @@ class InvitController extends AbstractController
     }
 
     /**
-     * @Route("/users/{userId}/groupes/{groupId}/sendInvit", name="sendInvit", methods={"POST"})
+     * @Route("/users/{userEmail}/groupes/{groupId}/sendInvit", name="sendInvit", methods={"GET"})
      */
     public function sendInvit(Request $request): JsonResponse
     {
@@ -35,15 +35,16 @@ class InvitController extends AbstractController
         $subject = 'You received a invitation for a group';
         $groupId = $request->get('groupId');
         $eGroup = $this->groupRepository->find($groupId);
-        $userId = $request->get('userId');
         $invitId = Uuid::v6();
+        $userEmail = $request->get('userEmail');
+        $eUser = $this->userRepository->findOneByEmail($userEmail);
+        $userId = $eUser->getId();
         $url = 'http://localhost:8000/users/' . $userId . '/groupes/' . $groupId . '/invites/' . $invitId . '/accept';
-        $eUser = $this->userRepository->find($userId);
-        $userEmail = $eUser->getEmail();
+
         $body = 'Hello ' . $eUser->getUsername() . '! You\'ve been invited to join ' . $eGroup->getName() . '\'s group by ' . $eGroup->getAdmin()->getUsername() . '.' . ' Link to the group: ' . $url;
 
-        if ($invit->verifUser($request->get('groupId'), $request->get('userId'))) {
-            $invit->sendMail($request->get('userId'), $request->get('groupId'), $body, $subject, $userEmail);
+        if ($invit->verifUser($groupId, $userId)) {
+            $invit->sendMail($userId, $groupId, $body, $subject, $userEmail);
             return new JsonResponse(
                 [
                     'message' => 'Mail envoyé',
