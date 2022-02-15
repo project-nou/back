@@ -32,7 +32,7 @@ class GroupRepository extends ServiceEntityRepository
     }
 
 
-    public function create(string $name, User $user)
+    public function create(string $name, User $user) : Group
     {
         $isExist = self::findOneByName($name);
         if ($isExist && $user === $isExist->getAdmin()) {
@@ -49,6 +49,7 @@ class GroupRepository extends ServiceEntityRepository
                 ->setAdmin($user);
             self::save($group);
             $this->_em->commit();
+            return $group;
         } catch (\Exception $exception) {
             $this->_em->rollback();
             throw new \Exception();

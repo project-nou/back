@@ -2,6 +2,7 @@
 
 namespace App\Services\Group;
 
+use App\Entity\Group;
 use App\Exception\UserNotFound;
 use App\Repository\GroupRepository;
 use App\Repository\UserRepository;
@@ -18,12 +19,15 @@ class GroupManagement
         $this->userRepository = $userRepository;
     }
 
-    public function create(string $name, string $username) :void
+    public function create(string $name, string $username) : array
     {
         $user = $this->userRepository->findOneByUsername($username);
-        !$user
-            ? throw new UserNotFound($username)
-            : $this->groupRepository->create($name, $user);
+        if (!$user) throw new UserNotFound($username);
+        $group = $this->groupRepository->create($name, $user);
+        return [
+            'group_id' => $group->getId(),
+            'groupname' => $group->getName()
+        ];
     }
 
     public function addParticipantInAGroup(string $name, string $username) :void
