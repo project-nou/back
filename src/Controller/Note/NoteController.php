@@ -32,14 +32,20 @@ class NoteController extends AbstractController
     {
         try {
             $note_management = new NoteManagement($this->noteRepository, $this->userRepository, $this->groupRepository);
+            $note = null;
             if ($request->get('format') === 'file') {
-                $note_management->create($request->get('group'), $request->get('author'), $request->get('format'), $request->files->get('file')->getClientOriginalName());
+                $note = $note_management->create($request->get('group'), $request->get('author'), $request->get('format'), $request->files->get('file')->getClientOriginalName());
                 FileSystem::upload(file_get_contents($request->files->get('file')), $request->get('group'), $request->get('group_id'), $request->files->get('file')->getClientOriginalName());
             } else if ($request->get('format') === 'text') {
-                $note_management->create($request->get('group'), $request->get('author'), $request->get('format'), $request->get('content'));
+                $note = $note_management->create($request->get('group'), $request->get('author'), $request->get('format'), $request->get('content'));
             }
             return new JsonResponse(
                 [
+                    'note_id' => $note->getId(),
+                    'content' => $note->getContent(),
+                    'author' => $note->getAuthor()->getUsername(),
+                    'format' => $note->getFormat(),
+                    'is_done' => $note->getIsDone(),
                     'message' => 'Note created'
                 ], 200
             );
@@ -82,13 +88,13 @@ class NoteController extends AbstractController
     }
 
     /**
-     * @Route("/note", name="delete note of a group", methods={"DELETE"})
+     * @Route("/note/{group_id}/{note_id}", name="delete note of a group", methods={"DELETE"})
      * Get all notes by type of note (text or file)
      */
     public function delete(Request $request): JsonResponse
     {
-        $group_id = json_decode($request->getContent())->group_id;
-        $note_id = json_decode($request->getContent())->note_id;
+        $group_id = $request->get('group_id');
+        $note_id = $request->get('note_id');
         try {
             $note_management = new NoteManagement($this->noteRepository, $this->userRepository, $this->groupRepository);
             $note_management->delete($group_id, $note_id);

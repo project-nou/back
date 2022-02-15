@@ -101,6 +101,7 @@ class GroupRepository extends ServiceEntityRepository
             $this->_em->remove($note);
             $this->_em->persist($group);
             $this->_em->flush();
+            $this->_em->commit();
         } catch (\Exception $exception) {
             $this->_em->rollback();
             throw new \Exception();

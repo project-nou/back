@@ -23,11 +23,11 @@ class NoteManagement
         $this->groupRepository = $groupRepository;
     }
 
-    public function create(string $group_name, string $author, string $format, string $content)
+    public function create(string $group_name, string $author, string $format, string $content): \App\Entity\Note
     {
         if(!$this->userRepository->findOneByUsername($author)) throw new UserNotFound($author);
         if(!$this->groupRepository->findOneByName($group_name)) throw new GroupNotFound($group_name);
-        $this->noteRepository->create($this->userRepository->findOneByUsername($author), $this->groupRepository->findOneByName($group_name), $format, $content);
+        return $this->noteRepository->create($this->userRepository->findOneByUsername($author), $this->groupRepository->findOneByName($group_name), $format, $content);
     }
 
     public function getAllNotesByGroup(int $group_id, string $type_file): array

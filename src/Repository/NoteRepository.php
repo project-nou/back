@@ -24,7 +24,7 @@ class NoteRepository extends ServiceEntityRepository
         parent::__construct($registry, Note::class);
     }
 
-    public function create(User $user, Group $group, string $format, string $content)
+    public function create(User $user, Group $group, string $format, string $content): Note
     {
         //if ($this->findOneBy(['author' => $user, "group" => $group,])) throw new NoteAlreadyExist();
         $note = new Note;
@@ -39,6 +39,7 @@ class NoteRepository extends ServiceEntityRepository
             $this->_em->persist($note);
             $this->_em->flush();
             $this->_em->commit();
+            return $note;
         } catch (\Exception $exception) {
             $this->_em->rollback();
             throw new \Exception();
