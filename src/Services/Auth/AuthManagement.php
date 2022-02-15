@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Exception\UserNotFound;
 use App\Repository\UserRepository;
 use Firebase\JWT\JWT;
 
@@ -30,16 +31,16 @@ class AuthManagement
 
     public function login(string $username, string $password) : string
     {
-        if (self::ensurePasswordIsValid($password, self::encodePassword($password))) {
+        if (self::ensurePasswordIsValid($password, $this->userRepository->findOneByUsername($username)->getPassword())) {
             $this->userRepository->login($username);
-        }
-        return self::encodeToken($this->secret_key,
-            [
-                "user_id" => $this->userRepository->login($username)->getId(),
-                "username" => $username,
-                "iat" => time(),
-                "exp" => time() + 60 * 60
-            ]);
+            return self::encodeToken($this->secret_key,
+                [
+                    "user_id" => $this->userRepository->login($username)->getId(),
+                    "username" => $username,
+                    "iat" => time(),
+                    "exp" => time() + 60 * 60
+                ]);
+        } throw new UserNotFound($username);
     }
 
 
@@ -48,9 +49,9 @@ class AuthManagement
         return password_hash($password, PASSWORD_DEFAULT);
     }
 
-    private static function ensurePasswordIsValid(string $password, string $encodePassword): bool
+    private static function ensurePasswordIsValid(string $entryPassword, string $password): bool
     {
-        return password_verify($password, $encodePassword);
+        return password_verify($entryPassword, $password);
     }
 
     private static function encodeToken(string $key, array $payload): string
