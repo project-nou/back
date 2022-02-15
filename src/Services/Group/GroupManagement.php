@@ -50,11 +50,13 @@ class GroupManagement
         $user = $this->userRepository->findOneByUsername($username);
         $groups = [];
         foreach ($user->getGroupsTheirIn() as $group) {
-            $temp['group_id'] = $group->getId();
-            $temp['group_name'] = $group->getName();
-            $temp['author_id'] = $group->getAdmin()->getId();
-            $temp['author'] = $group->getAdmin()->getUsername();
-            array_push($groups, $temp);
+            if($group->getIsActive()) {
+                $temp['group_id'] = $group->getId();
+                $temp['group_name'] = $group->getName();
+                $temp['author_id'] = $group->getAdmin()->getId();
+                $temp['author'] = $group->getAdmin()->getUsername();
+                array_push($groups, $temp);
+            }
         }
         return $groups;
     }

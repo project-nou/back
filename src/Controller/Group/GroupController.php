@@ -51,14 +51,17 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @Route("/group", name="delete_group", methods={"DELETE"})
+     * @Route("/group/{group_id}/{username}", name="delete_group", methods={"DELETE"})
+     * @param Request $request
+     * @return JsonResponse
      */
     public function delete(Request $request): JsonResponse
     {
+        $group_id = $request->get('group_id');
+        $username = $request->get('username');
         try {
-            $res = json_decode($request->getContent());
             $group = new GroupManagement($this->groupRepository, $this->userRepository);
-            $group->delete($res->name, $res->username);
+            $group->delete($group_id, $username);
             return new JsonResponse(
                 [
                     'message' => 'Group is deleted'
@@ -107,7 +110,7 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @Route("/groups/{username}", name="delete_group", methods={"GET"})
+     * @Route("/groups/{username}", name="get all by username", methods={"GET"})
      */
     public function getAllByUsername(Request $request): JsonResponse
     {
