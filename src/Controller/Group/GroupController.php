@@ -186,4 +186,28 @@ class GroupController extends AbstractController
         }
 
     }
+    /**
+     * @Route("/group/{groupId}/users", name="getUsersFromGroup", methods={"GET"})
+     */
+    public function getAllUsersFromGroup(Request $request): JsonResponse
+    {
+        try {
+            $groupId = $request->get('groupId');
+            $group = new GroupManagement($this->groupRepository, $this->userRepository);
+            return new JsonResponse(
+                [
+                    'groups' => $group->getAllUsersFromGroup($groupId),
+                ], 200
+            );
+        } catch (\Exception $exception) {
+            $exception->getCode() === 0
+                ? $code = 500
+                : $code = $exception->getCode();
+            return new JsonResponse(
+                [
+                    'message' => $exception->getMessage()
+                ], $code
+            );
+        }
+    }
 }
