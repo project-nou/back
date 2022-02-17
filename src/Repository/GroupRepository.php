@@ -7,6 +7,7 @@ use App\Entity\Note;
 use App\Entity\User;
 use App\Exception\GroupExist;
 use App\Exception\GroupNotFound;
+use App\Services\FileSystem\FileSystem;
 use Cassandra\Date;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -110,6 +111,11 @@ class GroupRepository extends ServiceEntityRepository
     {
         $group = self::find($group_id);
         $note = $noteRepository->find($note_id);
+
+        if($note->getFormat() === 'file') {
+            FileSystem::delete($group->getName(), $note->getContent(), $group_id);
+        }
+
         $this->_em->beginTransaction();
         try {
             $group->removeNote($note);

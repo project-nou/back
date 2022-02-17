@@ -15,10 +15,11 @@ class FileSystem
         self::deleteTempContent();
     }
 
-    public static function delete(string $group, string $filename)
+    public static function delete(string $group, string $filename, int $groupId)
     {
+        $filename = explode('.', $filename)[0];
         $cloudinary = new Cloudinary($_SERVER['CLOUDINARY_URL']);
-        $cloudinary->uploadApi()->destroy("$group/$filename", ['resource_type' => 'image']);
+        $cloudinary->uploadApi()->destroy("$group/$groupId/$filename", ['resource_type' => 'image']);
         /// TODO : Si plus aucun fichier dans dossier Cloudinary, delete dossier.
         self::deleteTempContent();
     }
