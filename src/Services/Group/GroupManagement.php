@@ -69,6 +69,32 @@ class GroupManagement
         return $groups;
     }
 
+    public function getAllUsersFromGroup(int $groupId): array
+    {
+        $allUsers = [];
+        $group = $this->groupRepository->findOneById($groupId);
+            $temp['group_id'] = $group->getId();
+            $temp['group_name'] = $group->getName();
+            $adminTemp = [];
+            $adminTemp['id'] = $group->getAdmin()->getId();
+            $adminTemp['email'] = $group->getAdmin()->getEmail();
+            $adminTemp['username'] = $group->getAdmin()->getUsername();
+            $adminTemp['isActive'] = $group->getAdmin()->getisActive();
+            $temp['admin'] = $adminTemp;
+            $participants = $group->getParticipants()->toArray();
+            $temp['participants'] = [];
+        foreach ($participants as $participant){
+            $participantTemp = [];
+            $participantTemp['id'] = $participant->getId();
+            $participantTemp['email'] = $participant->getEmail();
+            $participantTemp['username'] = $participant->getUsername();
+            $participantTemp['isActive'] = $participant->getisActive();
+                array_push($temp['participants'], $participantTemp);
+            }
+            array_push($allUsers, $temp);
+        return $allUsers;
+    }
+
     public function getNames(int $group_id, int $user_id) : array
     {
         return [
