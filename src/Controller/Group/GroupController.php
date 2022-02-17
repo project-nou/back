@@ -107,7 +107,7 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @Route("/groups/{username}", name="delete_group", methods={"GET"})
+     * @Route("/groups/{username}", name="get all_group", methods={"GET"})
      */
     public function getAllByUsername(Request $request): JsonResponse
     {
