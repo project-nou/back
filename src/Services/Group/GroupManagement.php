@@ -34,6 +34,14 @@ class GroupManagement
             : $this->groupRepository->addParticipant($name, $user);
     }
 
+    public function removeParticipantsInAGroup(int $id, string $username) :void
+    {
+        $eUser = $this->userRepository->findOneByUsername($username);
+        !$eUser
+            ? throw new UserNotFound($username)
+            : $this->groupRepository->removeParticipant($id, $eUser);
+    }
+
     public function delete(string $name, string $username) :void
     {
         $user = $this->userRepository->findOneByUsername($username);
@@ -50,11 +58,13 @@ class GroupManagement
         $user = $this->userRepository->findOneByUsername($username);
         $groups = [];
         foreach ($user->getGroupsTheirIn() as $group) {
-            $temp['group_id'] = $group->getId();
-            $temp['group_name'] = $group->getName();
-            $temp['author_id'] = $group->getAdmin()->getId();
-            $temp['author'] = $group->getAdmin()->getUsername();
-            array_push($groups, $temp);
+            if ($group->getIsActive()) {
+                $temp['group_id'] = $group->getId();
+                $temp['group_name'] = $group->getName();
+                $temp['author_id'] = $group->getAdmin()->getId();
+                $temp['author'] = $group->getAdmin()->getUsername();
+                array_push($groups, $temp);
+            }
         }
         return $groups;
     }

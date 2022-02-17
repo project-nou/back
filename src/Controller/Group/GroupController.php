@@ -4,6 +4,7 @@ namespace App\Controller\Group;
 
 use App\Repository\GroupRepository;
 use App\Repository\UserRepository;
+use App\Services\Admin\Admin;
 use App\Services\Group\GroupManagement;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -107,7 +108,7 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @Route("/groups/{username}", name="delete_group", methods={"GET"})
+     * @Route("/groups/{username}", name="get all_group", methods={"GET"})
      */
     public function getAllByUsername(Request $request): JsonResponse
     {
@@ -130,6 +131,38 @@ class GroupController extends AbstractController
                 ], $code
             );
         }
+    }
+
+    /**
+     * @Route("/user/{userId}/group/{groupId}/leave", name="leave_group", methods={"DELETE"})
+     */
+    public function leave(Request $request): JsonResponse
+    {
+        try {
+            $groupId = $request->get('groupId');
+            $userId = $request->get('userId');
+            $admin = new Admin($this->groupRepository, $this->userRepository);
+            if ($admin->checkIfUserIsAdmin($groupId,$userId)) {
+                $admin->changeAdmin($groupId,$userId);
+            } else {
+                $this->groupRepository->removeParticipant($groupId, $this->userRepository->find($userId));
+            }
+            return new JsonResponse(
+                [
+                    'message' => 'Group left'
+                ], 200
+            );
+        } catch (\Exception $exception) {
+            $exception->getCode() === 0
+                ? $code = 500
+                : $code = $exception->getCode();
+            return new JsonResponse(
+                [
+                    'message' => $exception->getMessage()
+                ], $code
+            );
+        }
+
     }
 
     /**

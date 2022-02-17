@@ -32,7 +32,7 @@ class GroupRepository extends ServiceEntityRepository
     }
 
 
-    public function create(string $name, User $user) : Group
+    public function create(string $name, User $user): Group
     {
         $isExist = self::findOneByName($name);
         if ($isExist && $user === $isExist->getAdmin()) {
@@ -62,6 +62,20 @@ class GroupRepository extends ServiceEntityRepository
         $this->_em->beginTransaction();
         try {
             $group->addParticipant($user);
+            self::save($group);
+            $this->_em->commit();
+        } catch (\Exception $exception) {
+            $this->_em->rollback();
+            throw new \Exception();
+        }
+    }
+
+    public function removeParticipant(int $id, User $user)
+    {
+        $group = self::findOneById($id);
+        $this->_em->beginTransaction();
+        try {
+            $group->removeParticipant($user);
             self::save($group);
             $this->_em->commit();
         } catch (\Exception $exception) {
@@ -118,6 +132,36 @@ class GroupRepository extends ServiceEntityRepository
             $this->_em->persist($group);
             $this->_em->flush();
             $this->_em->commit();
+        } catch (\Exception $exception) {
+            $this->_em->rollback();
+            throw new \Exception();
+        }
+    }
+
+    public function changeAdmin(int $groupId, int $userId, UserRepository $userRepository)
+    {
+        $group = self::findOneById($groupId);
+        $participants = $group->getParticipants();
+        $participants_array = [];
+        $this->_em->beginTransaction();
+        try {
+            foreach ($participants as $participant) {
+                array_push($participants_array, $participant->getId());
+            }
+            if (in_array($userId, $participants_array) && count($participants_array) === 1 || count($participants_array) < 1) {
+                $group->setIsActive(false);
+            } else {
+                $keyAdmin = array_search($userId, $participants_array);
+                if ($keyAdmin !== null) {
+                    $group->removeParticipant($userRepository->find($userId));
+                    unset($participants_array[$keyAdmin]);
+                }
+                $newAdminKey = array_rand($participants_array);
+                $newAdmin = $userRepository->find($participants_array[$newAdminKey]);
+                $group->setAdmin($newAdmin);
+            }
+                self::save($group);
+                $this->_em->commit();
         } catch (\Exception $exception) {
             $this->_em->rollback();
             throw new \Exception();
