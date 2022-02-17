@@ -138,31 +138,32 @@ class GroupController extends AbstractController
      */
     public function leave(Request $request): JsonResponse
     {
-        $groupId = $request->get('groupId');
-        $userId = $request->get('userId');
-        $eUser = $this->userRepository->find($userId);
-        $username = $eUser->getUsername();
-        $eGroup = new GroupManagement($this->groupRepository, $this->userRepository);
-        $eGroup->removeParticipantsInAGroup($groupId, $username);
-
-        //verif si c'est l'admin qui leave
-        if ($admin_id = $userId){
-        $eGroup = $this->groupRepository->find($groupId);
-        $admin_id = $eGroup->getAdmin()->getId();
-        $participants = $eGroup->getParticipants();
-        foreach ($participants as $participant) {
-            $particpantsInArray = $participants->toArray();
-            $random = array_rand($particpantsInArray, 1);
-            $newAdminId = $participants[$random];
-            }
+        try {
+            $groupId = $request->get('groupId');
+            $userId = $request->get('userId');
             $admin = new Admin($this->groupRepository, $this->userRepository);
-            $admin->changeAdmin($newAdminId, $groupId);
+            if ($admin->checkIfUserIsAdmin($groupId,$userId)) {
+                $admin->changeAdmin($groupId,$userId);
+            } else {
+                $this->groupRepository->removeParticipant($groupId, $this->userRepository->find($userId));
+            }
+            return new JsonResponse(
+                [
+                    'message' => 'Group left'
+                ], 200
+            );
+        } catch (\Exception $exception) {
+            dd($exception);
+            $exception->getCode() === 0
+                ? $code = 500
+                : $code = $exception->getCode();
+            return new JsonResponse(
+                [
+                    'message' => $exception->getMessage()
+                ], $code
+            );
         }
-        return new JsonResponse(
-            [
-                'message' => 'Group left'
-            ], 200
-        );
+
     }
 
     /**
