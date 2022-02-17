@@ -153,7 +153,6 @@ class GroupController extends AbstractController
                 ], 200
             );
         } catch (\Exception $exception) {
-            dd($exception);
             $exception->getCode() === 0
                 ? $code = 500
                 : $code = $exception->getCode();
