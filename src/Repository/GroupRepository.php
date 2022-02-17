@@ -70,6 +70,20 @@ class GroupRepository extends ServiceEntityRepository
         }
     }
 
+    public function removeParticipant(int $id, User $user)
+    {
+        $group = self::findOneById($id);
+        $this->_em->beginTransaction();
+        try {
+            $group->removeParticipant($user);
+            self::save($group);
+            $this->_em->commit();
+        } catch (\Exception $exception) {
+            $this->_em->rollback();
+            throw new \Exception();
+        }
+    }
+
     public function getNameById(int $id)
     {
         return self::findOneById($id)->getName();
@@ -117,6 +131,20 @@ class GroupRepository extends ServiceEntityRepository
             $group->setName($group_name);
             $this->_em->persist($group);
             $this->_em->flush();
+            $this->_em->commit();
+        } catch (\Exception $exception) {
+            $this->_em->rollback();
+            throw new \Exception();
+        }
+    }
+
+    public function changeAdmin(int $groupId, User $user)
+    {
+        $group = self::findOneById($groupId);
+        $this->_em->beginTransaction();
+        try {
+            $group->setAdmin($user);
+            self::save($group);
             $this->_em->commit();
         } catch (\Exception $exception) {
             $this->_em->rollback();
