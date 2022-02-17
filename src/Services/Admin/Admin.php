@@ -19,14 +19,14 @@ class Admin
         $this->userRepository = $userRepository;
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function changeAdmin($userId, $groupId)
+    public function changeAdmin(int $groupId, int $userId)
     {
-        $eGroup = $this->groupRepository->find($groupId);
-        $user = $this->userRepository->findById($userId);
-//        dd($user[0]);
-        $this->groupRepository->changeAdmin($groupId, $user[0]);
+        $this->groupRepository->changeAdmin($groupId, $userId, $this->userRepository);
+    }
+
+    public function checkIfUserIsAdmin(int $groupId, int $userId): bool
+    {
+        if ($this->groupRepository->find($groupId)->getAdmin()->getId() !== $userId ) return false;
+        return true;
     }
 }

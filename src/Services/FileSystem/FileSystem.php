@@ -25,7 +25,7 @@ class FileSystem
 
     private static function deleteTempContent(): void
     {
-        array_map('unlink', glob("temp/*.*"));
+        array_map('unlink', glob("temp/*"));
     }
 
     private static function deleteFolderCloudinary(string $path): void

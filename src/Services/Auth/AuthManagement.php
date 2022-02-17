@@ -23,7 +23,8 @@ class AuthManagement
         $this->userRepository->register(self::encodePassword($password), $email, $username);
         return self::encodeToken($this->secret_key,
             [
-                $username,
+                "user_id" => $this->userRepository->login($username)->getId(),
+                "username" => $username,
                 "iat" => time(),
                 "exp" => time() + 60 * 60
             ]);
