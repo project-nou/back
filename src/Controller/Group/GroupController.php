@@ -84,6 +84,7 @@ class GroupController extends AbstractController
     {
         try {
             $group_id = $request->get('group_id');
+            //hello test develop
             $group = new GroupManagement($this->groupRepository, $this->userRepository);
             return new JsonResponse(
                 [
