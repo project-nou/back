@@ -94,7 +94,7 @@ class GroupRepository extends ServiceEntityRepository
     {
         $group = self::find($id);
         if (!$group && $user !== $group->getAdmin()) {
-            throw new GroupNotFound($name);
+            throw new GroupNotFound($group->getName());
         }
         $this->_em->beginTransaction();
         try {
