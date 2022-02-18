@@ -1,4 +1,4 @@
-
+/public/temp/
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
@@ -10,3 +10,7 @@
 .idea
 ###< symfony/framework-bundle ###
 *.lock
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
