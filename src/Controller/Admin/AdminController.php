@@ -28,7 +28,6 @@ class AdminController extends AbstractController
     {
         $userId = $request->get('userId');
         $groupId = $request->get('groupId');
-        $eUser = $this->userRepository->find($userId);
         $admin = new Admin($this->groupRepository, $this->userRepository);
         $admin->changeAdmin($userId, $groupId);
         return new JsonResponse(
