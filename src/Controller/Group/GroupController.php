@@ -163,7 +163,6 @@ class GroupController extends AbstractController
                 ], $code
             );
         }
-
     }
 
     /**
