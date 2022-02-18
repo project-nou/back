@@ -90,9 +90,9 @@ class GroupRepository extends ServiceEntityRepository
         return self::findOneById($id)->getName();
     }
 
-    public function remove(string $name, User $user)
+    public function remove(int $id, User $user)
     {
-        $group = self::findOneByName($name);
+        $group = self::find($id);
         if (!$group && $user !== $group->getAdmin()) {
             throw new GroupNotFound($name);
         }

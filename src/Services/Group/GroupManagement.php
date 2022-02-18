@@ -42,10 +42,10 @@ class GroupManagement
             : $this->groupRepository->removeParticipant($id, $eUser);
     }
 
-    public function delete(string $name, string $username) :void
+    public function delete(int $id, string $username) :void
     {
         $user = $this->userRepository->findOneByUsername($username);
-        $this->groupRepository->remove($name, $user);
+        $this->groupRepository->remove($id, $user);
     }
 
     public function getOne(int $group_id): ?\App\Entity\Group
