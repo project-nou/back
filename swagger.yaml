@@ -1,0 +1,434 @@
+openapi: 3.0.0
+info:
+  title: Ynov
+  contact: {}
+  version: '1.0'
+servers:
+  - url: http://127.0.0.1:8000
+    variables: {}
+  - url: http://localhost:8000
+    variables: {}
+paths:
+  /group/group_id/username:
+    delete:
+      tags:
+        - Nou
+      summary: delete group
+      operationId: deletegroup
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://127.0.0.1:8000
+          variables: {}
+  /note/group_id/note_id:
+    delete:
+      tags:
+        - Nou
+      summary: Delete a note
+      operationId: Deleteanote
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://localhost:8000
+          variables: {}
+  /user/{userId}/group/{groupId}/leave:
+    delete:
+      tags:
+        - Nou
+      summary: leave group
+      operationId: leavegroup
+      parameters:
+        - name: userId
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: groupId
+          in: path
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://127.0.0.1:8000
+          variables: {}
+  /sign-up:
+    post:
+      tags:
+        - Nou
+      summary: sign-up
+      operationId: sign-up
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/sign-up-request'
+            example:
+              password: azerty
+              username: coucou
+              email: ueeee@bg.com
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://127.0.0.1:8000
+          variables: {}
+  /sign-in:
+    post:
+      tags:
+        - Nou
+      summary: sign-in
+      operationId: sign-in
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/sign-in-request'
+            example:
+              password: azerty
+              username: bg@bg.com
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://127.0.0.1:8000
+          variables: {}
+  /group:
+    post:
+      tags:
+        - Nou
+      summary: add group
+      operationId: addgroup
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addgrouprequest'
+            example:
+              name: Famille
+              username: luc
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://127.0.0.1:8000
+          variables: {}
+    patch:
+      tags:
+        - Nou
+      summary: update group
+      operationId: updategroup
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updategrouprequest'
+            example:
+              group_id: 2
+              group_name: Changement de nom
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://localhost:8000
+          variables: {}
+  /Famille de luc/add/luc:
+    post:
+      tags:
+        - Nou
+      summary: add user in group
+      operationId: adduseringroup
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/adduseringrouprequest'
+            example:
+              name: Famille
+              username: coucou
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://127.0.0.1:8000
+          variables: {}
+  /note:
+    post:
+      tags:
+        - Nou
+      summary: create note
+      operationId: createnote
+      parameters: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            encoding: {}
+            schema:
+              required:
+                - group
+                - author
+                - format
+                - content
+              type: object
+              properties:
+                group:
+                  type: string
+                  example: Famille de luc
+                author:
+                  type: string
+                  example: luc
+                format:
+                  type: string
+                  example: text
+                content:
+                  type: string
+                  example: WEWEWEWE LES REUFS
+        required: false
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://127.0.0.1:8000
+          variables: {}
+    patch:
+      tags:
+        - Nou
+      summary: update note
+      operationId: updatenote
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updatenoterequest'
+            example:
+              note_id: 6
+              content_note: Antoine fais la vaiselle !!
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://localhost:8000
+          variables: {}
+  /users/1/groupes/1/sendInvit:
+    post:
+      tags:
+        - Nou
+      summary: send invit
+      operationId: sendinvit
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://localhost:8000
+          variables: {}
+  /note/status:
+    post:
+      tags:
+        - Nou
+      summary: change status
+      operationId: changestatus
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/changestatusrequest'
+            example:
+              note_id: 1
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://localhost:8000
+          variables: {}
+  /groups/username:
+    get:
+      tags:
+        - Nou
+      summary: get one group by name group
+      operationId: getonegroupbynamegroup
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://localhost:8000
+          variables: {}
+  /notes/group_id:
+    get:
+      tags:
+        - Nou
+      summary: get all note of a group
+      operationId: getallnoteofagroup
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+        - url: http://localhost:8000
+          variables: {}
+components:
+  schemas:
+    sign-up-request:
+      title: sign-up-request
+      required:
+        - password
+        - username
+        - email
+      type: object
+      properties:
+        password:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+      example:
+        password: azerty
+        username: coucou
+        email: ueeee@bg.com
+    sign-in-request:
+      title: sign-in-request
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        password:
+          type: string
+        username:
+          type: string
+      example:
+        password: azerty
+        username: bg@bg.com
+    addgrouprequest:
+      title: addgrouprequest
+      required:
+        - name
+        - username
+      type: object
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+      example:
+        name: Famille
+        username: luc
+    adduseringrouprequest:
+      title: adduseringrouprequest
+      required:
+        - name
+        - username
+      type: object
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+      example:
+        name: Famille
+        username: coucou
+    changestatusrequest:
+      title: changestatusrequest
+      required:
+        - note_id
+      type: object
+      properties:
+        note_id:
+          type: integer
+          format: int32
+      example:
+        note_id: 1
+    updatenoterequest:
+      title: updatenoterequest
+      required:
+        - note_id
+        - content_note
+      type: object
+      properties:
+        note_id:
+          type: integer
+          format: int32
+        content_note:
+          type: string
+      example:
+        note_id: 6
+        content_note: Antoine fais la vaiselle !!
+    updategrouprequest:
+      title: updategrouprequest
+      required:
+        - group_id
+        - group_name
+      type: object
+      properties:
+        group_id:
+          type: integer
+          format: int32
+        group_name:
+          type: string
+      example:
+        group_id: 2
+        group_name: Changement de nom
+tags:
+  - name: Nou
+    description: Doc api
