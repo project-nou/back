@@ -57,6 +57,11 @@ There are nothing interresting on the back on the url, just launch it and then y
 ### External file manager :
   
 Cloudinary on : https://cloudinary.com/documentation/image_upload_api_reference  
+  
+  
+### API Documentation  
+  
+Check our swagger.yaml file and put it on : https://editor.swagger.io/
 
 
 
