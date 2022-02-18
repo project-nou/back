@@ -53,5 +53,10 @@ Your project will be connected on http://127.0.0.1:8000/.
 
 There are nothing interresting on the back on the url, just launch it and then you have to launch the front.
 
+  
+### External file manager :
+  
+Cloudinary on : https://cloudinary.com/documentation/image_upload_api_reference  
+
 
 
