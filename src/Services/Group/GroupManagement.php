@@ -73,16 +73,16 @@ class GroupManagement
     {
         $allUsers = [];
         $group = $this->groupRepository->findOneById($groupId);
-            $temp['group_id'] = $group->getId();
-            $temp['group_name'] = $group->getName();
-            $adminTemp = [];
-            $adminTemp['id'] = $group->getAdmin()->getId();
-            $adminTemp['email'] = $group->getAdmin()->getEmail();
-            $adminTemp['username'] = $group->getAdmin()->getUsername();
-            $adminTemp['isActive'] = $group->getAdmin()->getisActive();
-            $temp['admin'] = $adminTemp;
-            $participants = $group->getParticipants()->toArray();
-            $temp['participants'] = [];
+        $temp['group_id'] = $group->getId();
+        $temp['group_name'] = $group->getName();
+        $adminTemp = [];
+        $adminTemp['id'] = $group->getAdmin()->getId();
+        $adminTemp['email'] = $group->getAdmin()->getEmail();
+        $adminTemp['username'] = $group->getAdmin()->getUsername();
+        $adminTemp['isActive'] = $group->getAdmin()->getisActive();
+        $temp['admin'] = $adminTemp;
+        $participants = $group->getParticipants()->toArray();
+        $temp['participants'] = [];
         foreach ($participants as $participant){
             $participantTemp = [];
             $participantTemp['id'] = $participant->getId();
@@ -91,7 +91,7 @@ class GroupManagement
             $participantTemp['isActive'] = $participant->getisActive();
                 array_push($temp['participants'], $participantTemp);
             }
-            array_push($allUsers, $temp);
+        array_push($allUsers, $temp);
         return $allUsers;
     }
 
