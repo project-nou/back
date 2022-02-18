@@ -40,13 +40,18 @@ Implement your database:
 - `php bin/console doctrine:migrations:migrate`
 
 ⚠️ Dont't delete migrations files to avoid issues on relation or empty table.  
-After doing all of these steps, you can get some data of a full db in the clone of Cdesk.
+After doing all of these steps, you can get some data of a full db in the clone of Cdesk.  
+  
+Database schéma :  
+![image](https://user-images.githubusercontent.com/56299873/154643839-510b370c-3dec-43aa-9142-6767ea2a22be.png)
   
 ### Run the project  
   
 `Symfony serve` 
 
-Your project will be connected on http://127.0.0.1:8000/. 
+Your project will be connected on http://127.0.0.1:8000/.   
+
+There are nothing interresting on the back on the url, just launch it and then you have to launch the front.
 
 
 
