@@ -25,15 +25,16 @@ class Invit
 
     public function sendMail(int $userId, $groupId, $body, $subject, $userEmail)
     {
+        $smtpPassword = $this->getParameter('smtp.password');
         $transport = (new Swift_SmtpTransport('smtp.gmail.com',
                 465, 'ssl'))
-            ->setUsername('antoinemousset1999@gmail.com')
-            ->setPassword('rzdipdhyxqlsnhzs');
+            ->setUsername('nouappcontact@gmail.com')
+            ->setPassword($smtpPassword);
         // Create the Mailer using your created Transport
         $mailer = new Swift_Mailer($transport);
         // Create a message
         $message = (new Swift_Message($subject))
-            ->setFrom('antoinemousset1999@gmail.com')
+            ->setFrom('nouappcontact@gmail.com')
             ->setTo($userEmail)
             ->setBody($body);
         $mailer->send($message);
