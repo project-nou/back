@@ -6,7 +6,6 @@ use App\Repository\GroupRepository;
 use App\Repository\UserRepository;
 use App\Services\Group\GroupManagement;
 use App\Services\Invit\Invit;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +31,7 @@ class InvitController extends AbstractController
     public function sendInvit(Request $request): JsonResponse
     {
         $invit = new Invit($this->groupRepository, $this->userRepository);
-        $subject = 'You received a invitation for a group';
+        $subject = 'Tu as été invité à un groupe Nou !';
         $groupId = $request->get('groupId');
         $eGroup = $this->groupRepository->find($groupId);
         $invitId = Uuid::v6();
@@ -40,9 +39,12 @@ class InvitController extends AbstractController
         $eUser = $this->userRepository->findOneByEmail($userEmail);
         $userId = $eUser->getId();
         $url = 'http://localhost:8000/users/' . $userId . '/groupes/' . $groupId . '/invites/' . $invitId . '/accept';
-
-        $body = 'Hello ' . $eUser->getUsername() . '! You\'ve been invited to join ' . $eGroup->getName() . '\'s group by ' . $eGroup->getAdmin()->getUsername() . '.' . ' Link to the group: ' . $url;
-
+        $body = $this->renderView('invitation-accept.html.twig',
+        [
+            'user' => $eGroup->getAdmin()->getUsername(),
+            'group' => $eGroup->getName(),
+            'link' =>$url
+        ]);
         if ($invit->verifUser($groupId, $userId)) {
             $invit->sendMail($userId, $groupId, $body, $subject, $userEmail);
             return new JsonResponse(
@@ -67,8 +69,12 @@ class InvitController extends AbstractController
         $invit = new Invit($this->groupRepository, $this->userRepository);
         $data = $group->getNames($request->get('groupId'), $request->get('userId'));
         $eGroup = $this->groupRepository->find($request->get('groupId'));
-        $body = $data['username'] . ' has accepted your invitation on ' . $data['username'] . '\'s group.';
-        $subject = $data['username'] . ' has accepted your invitation';
+        $body = $this->renderView('accept.html.twig',
+            [
+                'user' => $data['username'],
+                'group' => $eGroup->getName(),
+            ]);
+        $subject = $data['username'] . ' a accepté ton invitation';
         $userEmail = $eGroup->getAdmin()->getEmail();
         if ($invit->verifUser($request->get('groupId'), $request->get('userId'))) {
             $group->addParticipantInAGroup($data['group_name'], $data['username']);
