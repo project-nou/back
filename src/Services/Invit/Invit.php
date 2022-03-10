@@ -28,12 +28,13 @@ class Invit
         $transport = (new Swift_SmtpTransport('smtp.gmail.com',
                 465, 'ssl'))
             ->setUsername('nouappcontact@gmail.com')
-            ->setPassword($this->getParameter('smtp.password'));
+            ->setPassword($_SERVER['EMAIL_SMTP_PASSWORD']);
         // Create the Mailer using your created Transport
         $mailer = new Swift_Mailer($transport);
         // Create a message
         $message = (new Swift_Message($subject))
             ->setFrom('nouappcontact@gmail.com')
+            ->setContentType('text/html')
             ->setTo($userEmail)
             ->setBody($body);
         $mailer->send($message);
