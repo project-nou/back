@@ -9,6 +9,7 @@ use App\Services\Invit\Invit;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Uuid;
 
@@ -63,7 +64,7 @@ class InvitController extends AbstractController
     /**
      * @Route("/users/{userId}/groupes/{groupId}/invites/{invitId}/accept", name="invit_accept", methods={"GET"})
      */
-    public function invitAccept(Request $request): JsonResponse
+    public function invitAccept(Request $request): Response
     {
         $group = new GroupManagement($this->groupRepository, $this->userRepository);
         $invit = new Invit($this->groupRepository, $this->userRepository);
@@ -79,18 +80,18 @@ class InvitController extends AbstractController
         if ($invit->verifUser($request->get('groupId'), $request->get('userId'))) {
             $group->addParticipantInAGroup($data['group_name'], $data['username']);
             $invit->sendMail($request->get('userId'), $request->get('groupId'), $body, $subject, $userEmail);
-            return new JsonResponse(
-                [
-                    'message' => 'Invitation acceptée',
-                ], 200
-            );
-        }
-        return new JsonResponse(
-            [
-                'message' => 'Deja accepté',
-            ], 400
-        );
 
+            return $this->render('invitation-accepted.html.twig', [
+                'alreadyAccepted' => false,
+                'userSendInvite' => $eGroup->getAdmin()->getUsername(),
+                'groupeName' => $eGroup->getName(),
+            ]);
+        }
+        return $this->render('invitation-accepted.html.twig', [
+            'alreadyAccepted' => true,
+            'userSendInvite' => $eGroup->getAdmin()->getUsername(),
+            'groupeName' => $eGroup->getName(),
+        ]);
     }
 
     /**
