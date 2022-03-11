@@ -62,6 +62,7 @@ Cloudinary on : https://cloudinary.com/documentation/image_upload_api_reference
 ### API Documentation  
   
 Check our swagger.yaml file and put it on : https://editor.swagger.io/
+Ou https://app.swaggerhub.com/apis/Secuserve/nou/1.0.0-oas3#/
 
 
 
